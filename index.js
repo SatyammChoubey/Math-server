@@ -42,29 +42,43 @@ app.use((req, res, next) => {
 // input validation
 
 function validateOperator(operation) {
-    const allowedOperators = ["plus", "minus", "multiply", "divide", "power", "modulo", "sqrt", "sin", "cos", "tan"];
-    return allowedOperators.includes(operation);
+  const allowedOperators = [
+    "plus",
+    "minus",
+    "multiply",
+    "by",
+    "power",
+    "modulo",
+    "sqrt",
+    "sin",
+    "cos",
+    "tan",
+  ];
+  return allowedOperators.includes(operation);
 }
 
 function validateNumber(num) {
-    return !isNaN(parseFloat(num)) && isFinite(num);
+  return !isNaN(parseFloat(num)) && isFinite(num);
 }
 
 // Endpoint to perform calculations and return JSON response
 app.get("/:num1/:operator/:num2/:operator2?/:num3?/:operator3?", (req, res) => {
   const { num1, operator, num2, operator2, num3, operator3 } = req.params;
-  if (!validateOperator(operator) || !validateNumber(num1) || !validateNumber(num2)) {
+  if (
+    !validateOperator(operator) ||
+    !validateNumber(num1) ||
+    !validateNumber(num2)
+  ) {
     return res.status(400).json({ error: "Invalid input" });
-}
+  }
 
-if (operator2 && (!validateOperator(operator2) || !validateNumber(num3))) {
+  if (operator2 && (!validateOperator(operator2) || !validateNumber(num3))) {
     return res.status(400).json({ error: "Invalid input" });
-}
+  }
 
-if (operator3 && (!validateOperator(operator3) || !validateNumber(num4))) {
+  if (operator3 && (!validateOperator(operator3) || !validateNumber(num4))) {
     return res.status(400).json({ error: "Invalid input" });
-}
-
+  }
 
   const op1 = parseFloat(num1);
   const op2 = parseFloat(num2);
@@ -90,10 +104,9 @@ if (operator3 && (!validateOperator(operator3) || !validateNumber(num4))) {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ error: "Internal server error" });
+  console.error(err.stack);
+  res.status(500).json({ error: "Internal server error" });
 });
-
 
 // Endpoint to view history
 app.get("/history", (req, res) => {
