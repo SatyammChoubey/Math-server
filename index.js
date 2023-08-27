@@ -2,7 +2,8 @@ const express = require("express");
 const app = express();
 const PORT = 3000;
 
-
+// Array to store history
+const history = [];
 
 // Helper function to calculate the result of a mathematical operation
 function calculate(operation, a, b) {
@@ -19,7 +20,14 @@ function calculate(operation, a, b) {
       return Math.pow(a, b);
     case "modulo":
       return a % b;
-    // Add more operators as needed
+    case "sqrt":
+      return Math.sqrt(a);
+    case "sin":
+      return Math.sin(a);
+    case "cos":
+      return Math.cos(a);
+    case "tan":
+      return Math.tan(a);
     default:
       return null;
   }
@@ -49,13 +57,18 @@ app.get("/:num1/:operator/:num2/:operator2?/:num3?/:operator3?", (req, res) => {
   const answer = result2;
 
   // Add the operation to history
-
+  history.push({ question, answer });
+  if (history.length > 20) {
+    history.shift();
+  }
 
   res.json({ question, answer });
 });
 
-// Add  Endpoint to view history
-
+// Endpoint to view history
+app.get("/history", (req, res) => {
+  res.json(history);
+});
 
 app.get("/", (req, res) => {
   const endpoints = [
@@ -72,7 +85,12 @@ app.get("/", (req, res) => {
       endpoint: "/3/into/5/plus/8/into/6",
       description: "Calculate 3 * 5 + 8 * 6",
     },
-    // Add more endpoints as needed
+    { endpoint: "/10/by/2", description: "Calculate 10/2" },
+    { endpoint: "/2/power/3", description: "Calculate 2^3" },
+    { endpoint: "/4/sqrt/2", description: "Calculate 4 root 2 " },
+    { endpoint: "/2/sin/4", description: "Calculate 2 sin 4 " },
+    { endpoint: "/2/cos/4", description: "Calculate 2 cos 4 " },
+    { endpoint: "/2/tan/4", description: "Calculate 2 tan 4 " },
   ];
 
   const endpointList = endpoints
